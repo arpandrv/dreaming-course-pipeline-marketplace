@@ -4,12 +4,12 @@
 
 1. Never modify the professor's original dump folder.
 2. Work only from the copied project folder created by Stage 1.
-3. Before each stage, inspect `pipeline_state.json` and verify the required prior-stage flags.
+3. Before each project stage, inspect `pipeline_state.json`, verify `dependencies_verified: true`, and verify the required prior-stage flags.
 4. Never silently skip unreadable or unsupported files. Record every file, failure, warning, and uncertainty in the relevant manifest.
 5. During ingestion, do not summarize, paraphrase, correct, interpret, or modernize source text.
 6. Treat Dreaming and other cultural material as culturally situated source material, not generic creative raw material. The bundled Dharawal transcriptions are approved, attributed source material for this pipeline and count as source support. Their inclusion authorizes faithful quotation, reference, and pedagogical use as written; it does not authorize inventing, merging, continuing, imitating, genericising, or reinterpreting stories or cultural details.
 7. Every blueprint must select and meaningfully incorporate at least one suitable bundled Dharawal story. A course topic that does not itself mention Dharawal material is not a reason to omit the library. If no story can be used without distortion or cultural harm, stop in the blueprint stage, record the specific blocker, and request human direction. Never approve or hand off a story-free blueprint.
-8. Stage 3 ingestion must use local, headless filesystem and command-line processing. Do not request, enable, or invoke a PowerPoint/Presentations app or connector, Microsoft PowerPoint automation, computer use, GUI automation, or cloud document service for slide rendering or notes extraction. If the required local renderer is unavailable, record the missing dependency and stop instead of switching to an interactive tool.
+8. Stage 0 must verify a real Python 3 interpreter, the complete package set, and the platform renderer before Stage 1 begins. Windows uses local `pywin32` COM automation of installed Microsoft PowerPoint. macOS uses Python `subprocess` with built-in `/usr/bin/osascript` and AppleScript to automate installed Microsoft PowerPoint after macOS Automation permission is granted. Neither route may be replaced by a Codex PowerPoint/Presentations connector, computer use, GUI clicking, `System Events`, keystrokes, browser automation, Aspose, LibreOffice, or a cloud document service. Unsupported platforms or missing/denied renderers are genuine blockers.
 9. Human review occurs inside the blueprint stage before image generation and inside the image stage before PowerPoint creation.
 10. Maintain a traceable audit trail in project artifacts and `pipeline_state.json`.
 11. Stop only at a required human-review loop, a genuine blocker, or the completed final stage. Successful non-review stages automatically hand off to a fresh agent.
@@ -60,6 +60,11 @@ Initialize `pipeline_state.json` with these keys. A stage updates only its own f
 ```json
 {
   "project_name": "",
+  "dependencies_verified": false,
+  "operating_system": "",
+  "powerpoint_automation_method": "",
+  "python_executable": "",
+  "dependency_versions": {},
   "source_copy_created": false,
   "files_organized": false,
   "files_processed": false,
@@ -80,10 +85,13 @@ Operate on the project selected by the user or the single unambiguous project un
 
 At every successful non-terminal transition, spawn a fresh agent using the available agent-delegation capability. Do not merely recommend the next command and do not run the next stage in the same agent.
 
+Stage 0 is the sole handoff exception to the project-root field because the project does not exist yet. Its handoff must provide the absolute professor-source path or selected working context, the intended project-parent context if known, and the verified pipeline Python path. Stage 1 creates the project root; all later handoffs must provide it.
+
 Give the new agent a handoff containing:
 
 - the absolute project-root path;
 - the completed stage and verified state flags;
+- the verified Python executable and dependency-preflight status;
 - the exact next skill to invoke;
 - the artifacts it must read;
 - unresolved warnings, uncertainties, and cultural-review flags;

@@ -9,7 +9,7 @@ Read `../../references/pipeline-contract.md` completely before acting.
 
 ## Sources
 
-Require `files_processed: true`. Read all relevant material in `02_processed/`, including rendered PowerPoint slides and extracted speaker notes. Also read `../../references/Dharawal_story_transcriptions/README.md` and every story Markdown file in that bundled directory completely. These stories ship with the plugin; do not ask the professor to provide them again.
+Require `dependencies_verified: true` and `files_processed: true`. Read all relevant material in `02_processed/`, including rendered PowerPoint slides and extracted speaker notes. Also read `../../references/Dharawal_story_transcriptions/README.md` and every story Markdown file in that bundled directory completely. These stories ship with the plugin; do not ask the professor to provide them again.
 
 The bundled stories are required, approved source material for this pipeline and count as source support even when the professor's academic materials do not mention Dharawal culture. Distinguish source statements from interpretation. Identify missing, uncertain, sensitive, or permission-dependent material. Treat the stories as culturally situated sources, not templates to imitate or expand.
 

@@ -1,19 +1,23 @@
 ---
 name: dreaming-course-setup-project
-description: Create and verify the protected working copy for a new Dreaming-inspired course-production project, then automatically hand it to the organization skill in a fresh agent.
+description: After dependency preflight passes, create and verify the protected working copy for a new Dreaming-inspired course-production project, then automatically hand it to organization.
 ---
 
 # Stage 1 - Create Working Copy
 
 Read `../../references/pipeline-contract.md` completely before acting.
 
+## Precondition
+
+Require a Stage 0 handoff containing `dependency_preflight_passed: true`, operating system, verified PowerPoint automation method, Python executable, version, and successful package results. If this skill is invoked directly without that evidence, do not create a project. Spawn a fresh agent to invoke `$dreaming-course-preflight`, pass it the selected source path or current working context, and stop this agent so preflight can return to Stage 1 after verification.
+
 ## Create and verify
 
 1. Identify the professor's source dump from the user's selection or the single unambiguous candidate in the current workspace. Ask only if multiple plausible folders exist.
-2. Create a clearly named project folder outside the source dump and build the standard project structure from the contract.
+2. Create a clearly named project folder outside the source dump and build the standard project structure from the contract. Use Python's `pathlib`, `shutil`, and `json` modules for deterministic local filesystem work.
 3. Copy every source file and subdirectory into `00_source_original/`. Preserve filenames, extensions, relative paths, and bytes. Never move, rename, normalize, or edit the source dump.
-4. Initialize `pipeline_state.json` from the contract and set `project_name`.
-5. Compare source and copy by relative path, file count, byte size, and cryptographic hash. Record discrepancies and copy errors.
+4. Initialize `pipeline_state.json` from the contract. Set `project_name`, `dependencies_verified: true`, `operating_system`, `powerpoint_automation_method`, `python_executable`, and `dependency_versions` from the verified Stage 0 handoff.
+5. Compare source and copy by relative path, file count, byte size, and SHA-256 using Python's `hashlib`. Record discrepancies and copy errors.
 6. Set `source_copy_created` to true only when the copy is complete and exact. Record the source path, project path, count, verification result, and timestamp.
 
 ## Automatic handoff

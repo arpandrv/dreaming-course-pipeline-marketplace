@@ -1,7 +1,7 @@
 {
   "name": "dreaming-course-pipeline",
-  "version": "0.2.0+codex.20260826084924",
-  "description": "An agent-handoff course-production workflow that turns weekly materials and bundled Dharawal stories into reviewed, narrative-led teaching decks.",
+  "version": "0.2.0+codex.20260826114100",
+  "description": "A dependency-checked agent-handoff workflow that turns weekly materials and bundled Dharawal stories into reviewed, narrative-led teaching decks.",
   "author": {
     "name": "Dreaming Course Pipeline contributors"
   },
@@ -9,13 +9,15 @@
   "interface": {
     "displayName": "Dreaming Course Pipeline",
     "shortDescription": "Build governed narrative-led teaching decks.",
-    "longDescription": "Six linked workflow skills use fresh-agent handoffs for source preservation, processing, mandatory attributed use of the bundled Dharawal story library, blueprint and image review, PowerPoint assembly, and QA.",
+    "longDescription": "Seven linked workflow skills verify Windows or macOS dependencies, preserve and process sources, require attributed use of the bundled Dharawal story library, review blueprints and images, and assemble and QA PowerPoint decks.",
     "developerName": "Dreaming Course Pipeline contributors",
     "category": "Productivity",
     "capabilities": [
-      "Six linked course-production skills with agent handoffs",
+      "Automatic Python and package dependency preflight",
+      "Local PowerPoint rendering on Windows and macOS",
+      "Seven linked course-production skills with agent handoffs",
       "Required attributed use of the bundled Dharawal story library"
     ],
-    "defaultPrompt": "Use $dreaming-course-setup-project to start the automatic Dreaming Course Pipeline from my course materials."
+    "defaultPrompt": "Use $dreaming-course-preflight to verify dependencies and start the automatic Dreaming Course Pipeline from my course materials."
   }
 }

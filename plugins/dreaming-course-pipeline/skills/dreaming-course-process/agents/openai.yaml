@@ -1,7 +1,7 @@
 interface:
   display_name: "Dreaming Course: Process Files"
-  short_description: "Render slides and faithfully process source files"
-  default_prompt: "Use $dreaming-course-process to render slides, extract speaker notes, and process the organized source files."
+  short_description: "Process sources with the verified Python stack"
+  default_prompt: "Use $dreaming-course-process to render slides through verified Windows or macOS PowerPoint automation and process the organized source files."
 
 policy:
   allow_implicit_invocation: false

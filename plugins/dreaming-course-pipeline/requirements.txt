@@ -1,0 +1,14 @@
+python-pptx
+lxml
+pywin32; sys_platform == "win32"
+PyMuPDF
+Pillow
+numpy
+opencv-python
+paddleocr
+paddlepaddle>=3.0
+python-docx
+openpyxl
+pandas
+beautifulsoup4
+trafilatura

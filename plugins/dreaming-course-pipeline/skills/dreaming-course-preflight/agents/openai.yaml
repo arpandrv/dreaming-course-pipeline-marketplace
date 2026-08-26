@@ -1,0 +1,7 @@
+interface:
+  display_name: "Dreaming Course: Preflight"
+  short_description: "Verify Python and install pipeline dependencies"
+  default_prompt: "Use $dreaming-course-preflight to verify dependencies and start the automatic course-production pipeline."
+
+policy:
+  allow_implicit_invocation: true

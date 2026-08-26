@@ -1,6 +1,6 @@
 ---
 name: dreaming-course-process
-description: "Process course files with local headless command-line tools: render PowerPoint slides to images, extract only speaker notes, and hand verified outputs to blueprint design. Never use PowerPoint/Presentations connectors, computer use, or GUI automation."
+description: "Process course files with the verified Python stack and platform-local PowerPoint automation on Windows or macOS, then hand verified outputs to blueprint design."
 ---
 
 # Stage 3 - Process Files
@@ -9,25 +9,28 @@ Read `../../references/pipeline-contract.md` completely before acting.
 
 ## Preconditions and fidelity
 
-Require `source_copy_created: true` and `files_organized: true`. This is ingestion, not teaching design. Preserve source wording, order, structure, and page boundaries. Do not summarize, paraphrase, correct, interpret, or silently repair OCR. Mark uncertainty without guessing.
+Require `dependencies_verified: true`, `source_copy_created: true`, and `files_organized: true`. Use the exact `python_executable` recorded in `pipeline_state.json`. This is ingestion, not teaching design. Preserve source wording, order, structure, and page boundaries. Do not summarize, paraphrase, correct, interpret, or silently repair OCR. Mark uncertainty without guessing.
 
 ## Required local execution path
 
-Run Stage 3 entirely against local project files with headless command-line tools. Do not request, enable, or invoke any built-in or external PowerPoint/Presentations app or connector, Microsoft PowerPoint application automation, computer use, GUI automation, browser automation, or cloud document service.
+Run Stage 3 entirely against local project files with the Stage 0-verified Python stack. Do not request, enable, or invoke a Codex PowerPoint/Presentations connector, computer use, GUI clicking, browser automation, or cloud document service.
 
-For PowerPoint rendering, use this order:
+Read `../../references/powerpoint-rendering.md` completely and use only the route recorded in `pipeline_state.json`:
 
-1. Load the bundled workspace dependency paths when that facility is available and use its local presentation-rendering utilities.
-2. Otherwise use an already-installed LibreOffice executable in headless mode, with Python or shell orchestration as needed.
-3. Use Python libraries or direct OOXML inspection for speaker-note extraction and validation. Do not claim that `python-pptx` itself visually renders slides.
+1. Use `python-pptx` and `lxml` to inspect the PPTX package and extract speaker notes. Do not claim that `python-pptx` visually renders slides.
+2. On Windows, use `pywin32` COM automation. On macOS, use Python `subprocess` with `/usr/bin/osascript` and AppleScript to automate locally installed Microsoft PowerPoint without GUI clicking.
+3. Use `PyMuPDF` to render every PDF page to a high-resolution PNG in slide order. Check page count against the PPTX slide count before accepting the output.
 
-Do not install software or ask the user for unrelated app/plugin permissions. If neither a bundled local renderer nor an installed headless LibreOffice executable is available, record the exact missing dependency in `processing_manifest.md`, leave `files_processed` false, and stop as a genuine blocker. Never fall back to an interactive application or computer use.
+The Windows COM and macOS AppleScript routes are approved local programmatic automation. The macOS route may launch PowerPoint and requires macOS Automation permission, but must not use `System Events`, keystrokes, menus, mouse actions, `activate`, computer use, or other visible app control. Do not install Aspose, LibreOffice, Poppler, Tesseract, or presentation plugins. If PowerPoint is absent, platform automation is denied, or export fails, record the exact blocker in `processing_manifest.md`, leave `files_processed` false, and stop. Do not manufacture approximate slides with `python-pptx` drawing primitives.
 
 ## Process by type
 
-- **PowerPoint:** Render every slide at high quality into `02_processed/pptx/<deck-name>/slide_NNN.png` through the required local headless execution path above. Do not extract visible slide text. If speaker notes exist, extract them verbatim into a companion Markdown file with source filename and slide-number boundaries. If no notes exist, record that fact in the manifest without creating an empty notes artifact.
-- **PDF:** Test for a usable text layer. Extract it directly when usable and apply OCR only to pages that need it. Preserve page boundaries and mark low-confidence or illegible regions.
-- **DOC/DOCX:** Extract text and structure while preserving headings, lists, tables, captions, and document order.
+- **PowerPoint:** Use `python-pptx`/`lxml`, the recorded Windows `pywin32` or macOS `osascript` route, and `PyMuPDF`. Save every rendered slide at high quality as `02_processed/pptx/<deck-name>/slide_NNN.png`. Do not extract visible slide text. If speaker notes exist, extract them verbatim into a companion Markdown file with source filename and slide-number boundaries. If no notes exist, record that fact without creating an empty notes artifact.
+- **PDF:** Use `PyMuPDF` to test and extract a usable text layer while preserving page boundaries. For image-only or unusable pages, rasterize with `PyMuPDF`, preprocess only as needed with `Pillow`, `numpy`, and `opencv-python`, and OCR with `paddleocr` backed by `paddlepaddle`. Record OCR use and uncertainty page by page; never silently correct OCR.
+- **DOCX:** Use `python-docx` to extract headings, paragraphs, lists, tables, captions, and document order. Treat legacy `.doc` as unsupported unless an already-available, explicitly approved local converter can produce a faithful intermediate; record the outcome rather than renaming it.
+- **XLSX:** Use `openpyxl` to preserve workbook/sheet/cell structure and `pandas` only where a tabular view aids extraction or validation. Record formulas and displayed-value limitations.
+- **HTML:** Use `trafilatura` for main-text extraction and `beautifulsoup4` for DOM structure or fallback extraction. Preserve the original HTML copy and record which method produced the processed text.
+- **Raster images:** Inspect with `Pillow`; when textual extraction is relevant, preprocess with `numpy`/`opencv-python` and OCR with PaddleOCR. Preserve the original image and record confidence or illegibility.
 - **Markdown:** Copy unchanged and verify byte equality.
 - **Other types:** Copy unchanged and record whether each type was processed, copied only, unreadable, or unsupported.
 
@@ -37,4 +40,4 @@ Validate that every PowerPoint slide has exactly one rendered image, speaker not
 
 ## Automatic handoff
 
-After successful processing, follow the contract's agent handoff protocol. Spawn a fresh agent and instruct it to invoke `$dreaming-course-blueprint`. Include the absolute project root, verified state, processing manifest, rendered-deck paths, notes artifacts, processed course-material paths, warnings, and OCR uncertainties. Do not design the blueprint in this agent.
+After successful processing, follow the contract's agent handoff protocol. Spawn a fresh agent and instruct it to invoke `$dreaming-course-blueprint`. Include the absolute project root, verified state and Python executable, processing manifest, rendered-deck paths, notes artifacts, processed course-material paths, library/render methods used, warnings, and OCR uncertainties. Do not design the blueprint in this agent.
