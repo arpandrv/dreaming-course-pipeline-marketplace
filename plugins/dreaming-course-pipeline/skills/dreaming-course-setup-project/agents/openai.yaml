@@ -1,0 +1,7 @@
+interface:
+  display_name: "Dreaming Course: Setup Project"
+  short_description: "Create and verify a protected working copy"
+  default_prompt: "Use $dreaming-course-setup-project to start the automatic course-production pipeline from my source dump."
+
+policy:
+  allow_implicit_invocation: true

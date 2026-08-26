@@ -1,0 +1,7 @@
+interface:
+  display_name: "Dreaming Course: Blueprint"
+  short_description: "Design and review the narrative teaching flow"
+  default_prompt: "Use $dreaming-course-blueprint to design and iteratively review the sourced teaching blueprint."
+
+policy:
+  allow_implicit_invocation: false

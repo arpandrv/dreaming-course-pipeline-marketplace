@@ -1,0 +1,20 @@
+{
+  "name": "dreaming-course-pipeline-marketplace",
+  "interface": {
+    "displayName": "Dreaming Course Pipeline"
+  },
+  "plugins": [
+    {
+      "name": "dreaming-course-pipeline",
+      "source": {
+        "source": "local",
+        "path": "./plugins/dreaming-course-pipeline"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

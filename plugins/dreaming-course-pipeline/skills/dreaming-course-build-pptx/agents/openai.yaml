@@ -1,0 +1,7 @@
+interface:
+  display_name: "Dreaming Course: Build PPTX"
+  short_description: "Assemble, render, and QA the final deck"
+  default_prompt: "Use $dreaming-course-build-pptx to assemble and QA the final presentation from the reviewed current images."
+
+policy:
+  allow_implicit_invocation: false

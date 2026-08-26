@@ -1,0 +1,7 @@
+interface:
+  display_name: "Dreaming Course: Organize"
+  short_description: "Inventory and organize the protected sources"
+  default_prompt: "Use $dreaming-course-organize to inventory and organize the current project's protected source copy."
+
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Dreaming Course: Generate Images"
+  short_description: "Generate and iteratively review slide images"
+  default_prompt: "Use $dreaming-course-generate-images to generate and iteratively review images from the accepted blueprint."
+
+policy:
+  allow_implicit_invocation: false
