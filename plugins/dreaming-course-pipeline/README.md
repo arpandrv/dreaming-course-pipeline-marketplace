@@ -31,6 +31,8 @@ The automatic chain is:
 
 Each completed non-review stage spawns a fresh agent with a structured handoff and invokes the next skill. The professor does not need to start each stage manually. If a handoff fails because agent delegation is unavailable, the current agent reports the blocker and the exact next skill instead of pretending the stage continued.
 
+Stage 3 processes PowerPoint files locally with bundled command-line rendering utilities or an installed headless LibreOffice executable. It does not use PowerPoint/Presentations connectors, Microsoft PowerPoint automation, computer use, GUI automation, or cloud document services.
+
 ## Bundled story library
 
 The plugin includes the curated Dharawal story transcriptions in `references/Dharawal_story_transcriptions/`. The blueprint stage reads the complete library, selects at least one suitable story, and incorporates it with attribution and source traceability. A blueprint containing no bundled story material fails validation. Professors do not have to provide the stories for each project.

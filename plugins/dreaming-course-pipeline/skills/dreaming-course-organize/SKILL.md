@@ -22,4 +22,4 @@ Require `source_copy_created: true`. Work only from `00_source_original/`; never
 
 ## Automatic handoff
 
-After successful organization, follow the contract's agent handoff protocol. Spawn a fresh agent and instruct it to invoke `$dreaming-course-process`. Include the absolute project root, verified source and organization flags, inventory path, counts by type, collisions, and unreadable or unusual files. Do not process files in this agent and do not request a redundant readiness confirmation.
+After successful organization, follow the contract's agent handoff protocol. Spawn a fresh agent and instruct it to invoke `$dreaming-course-process`. Include the absolute project root, verified source and organization flags, inventory path, counts by type, collisions, unreadable or unusual files, and the requirement to use local headless command-line processing without PowerPoint/Presentations connectors or computer use. Do not process files in this agent and do not request a redundant readiness confirmation.

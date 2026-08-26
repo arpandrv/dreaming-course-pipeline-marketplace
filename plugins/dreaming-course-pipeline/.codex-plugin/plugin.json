@@ -1,6 +1,6 @@
 {
   "name": "dreaming-course-pipeline",
-  "version": "0.2.0+codex.20260826072757",
+  "version": "0.2.0+codex.20260826084924",
   "description": "An agent-handoff course-production workflow that turns weekly materials and bundled Dharawal stories into reviewed, narrative-led teaching decks.",
   "author": {
     "name": "Dreaming Course Pipeline contributors"
