@@ -32,11 +32,13 @@ The automatic chain is:
 
 Each completed non-review stage spawns a fresh agent with a structured handoff and invokes the next skill. The professor does not need to start each stage manually. If a handoff fails because agent delegation is unavailable, the current agent reports the blocker and the exact next skill instead of pretending the stage continued.
 
-Stage 0 uses `requirements.txt` and the bundled dependency-check script to create or reuse a dedicated pipeline virtual environment, install only missing packages, run `pip check`, and verify the complete set. It does not modify Codex's bundled Python. Stage 3 uses `python-pptx` for speaker notes, installed Microsoft PowerPoint for PPTX-to-PDF export, and `PyMuPDF` for PDF-to-image rendering. Windows controls PowerPoint with `pywin32` COM. macOS controls PowerPoint from Python through built-in `osascript` and AppleScript after the user grants macOS Automation permission. Neither route uses a Codex PowerPoint/Presentations connector, computer use, GUI clicking, browser automation, Aspose, or a cloud document service.
+Stage 0 uses `requirements.txt` and the bundled dependency-check script to create or reuse a dedicated pipeline virtual environment, install only missing packages, run `pip check`, and verify the complete set. It does not modify Codex's bundled Python. It explicitly requests outside-sandbox execution for environment/package installation when needed and for every Microsoft PowerPoint automation command. This is Codex execution in the user's normal desktop session, not an Administrator shell. Ordinary project file work remains sandboxed.
+
+Stage 3 uses `python-pptx` for speaker notes and installed Microsoft PowerPoint for faithful slide rendering. Windows controls PowerPoint with `pywin32` COM, explicitly initializes COM, and exports slides directly to PNG. macOS controls PowerPoint from Python through built-in `osascript` and AppleScript, exports PDF, and renders pages with `PyMuPDF` after the user grants macOS Automation permission. Neither route uses a Codex PowerPoint/Presentations connector, computer use, GUI clicking, browser automation, Aspose, or a cloud document service.
 
 ## Platform requirements
 
-- **Windows:** locally installed Microsoft PowerPoint and the Stage 0-installed `pywin32` package.
+- **Windows:** locally installed Microsoft PowerPoint and the Stage 0-installed `pywin32` package. PowerPoint COM probes and exports run outside the Codex sandbox with `pythoncom.CoInitialize()` and `DispatchEx`; they do not require an Administrator shell.
 - **macOS:** locally installed Microsoft PowerPoint for Mac, built-in `/usr/bin/osascript` and `/usr/bin/sdef`, and one-time macOS Automation permission for the calling Codex/Python host. PowerPoint may launch or appear briefly, but the pipeline does not click or type in it.
 - **Linux and other platforms:** no approved renderer; preflight stops before creating a project.
 

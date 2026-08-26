@@ -5,7 +5,7 @@ description: Assemble the final 16:9 PowerPoint from the professor-accepted curr
 
 # Stage 6 - Build PowerPoint and QA
 
-Read `../../references/pipeline-contract.md` completely before acting.
+Read `../../references/pipeline-contract.md`, `../../references/execution-permissions.md`, and `../../references/powerpoint-rendering.md` completely before acting.
 
 ## Preconditions
 
@@ -17,7 +17,7 @@ Use `python-pptx` with `lxml` support to create a 16:9 presentation with one ful
 
 ## QA
 
-Read `../../references/powerpoint-rendering.md` completely and render the finished deck through the platform route recorded in `pipeline_state.json`: Windows uses `pywin32` COM; macOS uses Python `subprocess` with `/usr/bin/osascript` and AppleScript. Export `final_deck.pptx` to PDF, close and clean up the locally created PowerPoint instance, then use `PyMuPDF` to render every PDF page into `05_output/rendered_slides/`. On macOS, allow the already-approved Automation permission but do not use `System Events`, keystrokes, menus, mouse actions, `activate`, or computer use. Do not use a Codex PowerPoint/Presentations connector, Aspose, LibreOffice, Poppler, or a cloud service.
+Render the finished deck through the platform route recorded in `pipeline_state.json`, requesting outside-sandbox execution before Office automation. Windows uses `pywin32` COM with explicit `pythoncom.CoInitialize()`/`CoUninitialize()` and direct PowerPoint PNG export into `05_output/rendered_slides/`. macOS uses Python `subprocess` with `/usr/bin/osascript` and AppleScript to export PDF, then `PyMuPDF` renders every PDF page into that folder. Close and clean up only the locally created PowerPoint instance. On macOS, allow the already-approved Automation permission but do not use `System Events`, keystrokes, menus, mouse actions, `activate`, or computer use. If outside-sandbox execution is unavailable, stop with that exact permission blocker rather than retrying Office automation inside the sandbox. Do not use a Codex PowerPoint/Presentations connector, Aspose, LibreOffice, Poppler, or a cloud service.
 
 Inspect the rendered output, not only the PPTX object model. Use `python-pptx`/`lxml` for structural slide-count and relationship checks; `Pillow`, `numpy`, and `opencv-python` for aspect ratio, full-bleed placement, clipping, borders, blank or corrupt slides, and image artifacts; and PaddleOCR for spelling/exact-text evidence where reviewed slides contain text. Visually resolve OCR discrepancies and inspect continuity and alignment with the reviewed blueprint and image manifest.
 

@@ -5,7 +5,7 @@ description: "Process course files with the verified Python stack and platform-l
 
 # Stage 3 - Process Files
 
-Read `../../references/pipeline-contract.md` completely before acting.
+Read `../../references/pipeline-contract.md`, `../../references/execution-permissions.md`, and `../../references/powerpoint-rendering.md` completely before acting.
 
 ## Preconditions and fidelity
 
@@ -15,17 +15,15 @@ Require `dependencies_verified: true`, `source_copy_created: true`, and `files_o
 
 Run Stage 3 entirely against local project files with the Stage 0-verified Python stack. Do not request, enable, or invoke a Codex PowerPoint/Presentations connector, computer use, GUI clicking, browser automation, or cloud document service.
 
-Read `../../references/powerpoint-rendering.md` completely and use only the route recorded in `pipeline_state.json`:
-
 1. Use `python-pptx` and `lxml` to inspect the PPTX package and extract speaker notes. Do not claim that `python-pptx` visually renders slides.
-2. On Windows, use `pywin32` COM automation. On macOS, use Python `subprocess` with `/usr/bin/osascript` and AppleScript to automate locally installed Microsoft PowerPoint without GUI clicking.
-3. Use `PyMuPDF` to render every PDF page to a high-resolution PNG in slide order. Check page count against the PPTX slide count before accepting the output.
+2. Request outside-sandbox execution before any PowerPoint automation. On Windows, use `pywin32` COM with explicit `pythoncom.CoInitialize()`/`CoUninitialize()` and direct PowerPoint PNG export. On macOS, use Python `subprocess` with `/usr/bin/osascript` and AppleScript to export through locally installed Microsoft PowerPoint without GUI clicking.
+3. On macOS, use `PyMuPDF` to render every exported PDF page to a high-resolution PNG in slide order. On both platforms, check the rendered-image count against the PPTX slide count before accepting the output.
 
-The Windows COM and macOS AppleScript routes are approved local programmatic automation. The macOS route may launch PowerPoint and requires macOS Automation permission, but must not use `System Events`, keystrokes, menus, mouse actions, `activate`, computer use, or other visible app control. Do not install Aspose, LibreOffice, Poppler, Tesseract, or presentation plugins. If PowerPoint is absent, platform automation is denied, or export fails, record the exact blocker in `processing_manifest.md`, leave `files_processed` false, and stop. Do not manufacture approximate slides with `python-pptx` drawing primitives.
+The Windows COM and macOS AppleScript routes are approved local programmatic automation and must run through the outside-sandbox command mode described in the execution-permissions reference. The macOS route may launch PowerPoint and requires macOS Automation permission, but must not use `System Events`, keystrokes, menus, mouse actions, `activate`, computer use, or other visible app control. Do not install Aspose, LibreOffice, Poppler, Tesseract, or presentation plugins. If outside-sandbox execution is unavailable, PowerPoint is absent, platform automation is denied, or export fails, record the exact distinct blocker in `processing_manifest.md`, leave `files_processed` false, and stop. Do not manufacture approximate slides with `python-pptx` drawing primitives.
 
 ## Process by type
 
-- **PowerPoint:** Use `python-pptx`/`lxml`, the recorded Windows `pywin32` or macOS `osascript` route, and `PyMuPDF`. Save every rendered slide at high quality as `02_processed/pptx/<deck-name>/slide_NNN.png`. Do not extract visible slide text. If speaker notes exist, extract them verbatim into a companion Markdown file with source filename and slide-number boundaries. If no notes exist, record that fact without creating an empty notes artifact.
+- **PowerPoint:** Use `python-pptx`/`lxml` for structure and notes. Render with the recorded outside-sandbox Windows `pywin32` direct-PNG route or macOS `osascript` PDF route followed by `PyMuPDF`. Save every rendered slide at high quality as `02_processed/pptx/<deck-name>/slide_NNN.png`. Do not extract visible slide text. If speaker notes exist, extract them verbatim into a companion Markdown file with source filename and slide-number boundaries. If no notes exist, record that fact without creating an empty notes artifact.
 - **PDF:** Use `PyMuPDF` to test and extract a usable text layer while preserving page boundaries. For image-only or unusable pages, rasterize with `PyMuPDF`, preprocess only as needed with `Pillow`, `numpy`, and `opencv-python`, and OCR with `paddleocr` backed by `paddlepaddle`. Record OCR use and uncertainty page by page; never silently correct OCR.
 - **DOCX:** Use `python-docx` to extract headings, paragraphs, lists, tables, captions, and document order. Treat legacy `.doc` as unsupported unless an already-available, explicitly approved local converter can produce a faithful intermediate; record the outcome rather than renaming it.
 - **XLSX:** Use `openpyxl` to preserve workbook/sheet/cell structure and `pandas` only where a tabular view aids extraction or validation. Record formulas and displayed-value limitations.
