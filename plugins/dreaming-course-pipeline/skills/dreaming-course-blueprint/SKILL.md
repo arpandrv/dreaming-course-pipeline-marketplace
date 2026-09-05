@@ -1,44 +1,32 @@
 ---
 name: dreaming-course-blueprint
-description: Design the sourced narrative teaching blueprint using processed course materials and the bundled Dharawal story library, run iterative professor review, then hand approved work to image generation.
+description: Write and iteratively review complete teaching stories and insertion-only slide prompts grounded in processed course concepts, without redesigning original slides.
 ---
 
-# Stage 4 - Design and Review Blueprint
+# Stage 4 — Story blueprint and professor review
 
-Read `../../references/pipeline-contract.md` completely before acting.
+Read ../../references/pipeline-contract.md and ../../references/teaching-story.md completely. Require verified dependencies and processed sources.
 
-## Sources
+Inspect rendered teaching slides, extracted text, speaker notes and processing_manifest.md. Read the bundled story index and any selected story in full. Professors need not supply the library again; do not force a traditional story onto an unrelated concept.
 
-Require `dependencies_verified: true` and `files_processed: true`. Read all relevant material in `02_processed/`, including rendered PowerPoint slides and extracted speaker notes. Also read `../../references/Dharawal_story_transcriptions/README.md` and every story Markdown file in that bundled directory completely. These stories ship with the plugin; do not ask the professor to provide them again.
+## Design before illustration
 
-The bundled stories are required, approved source material for this pipeline and count as source support even when the professor's academic materials do not mention Dharawal culture. Distinguish source statements from interpretation. Identify missing, uncertain, sensitive, or permission-dependent material. Treat the stories as culturally situated sources, not templates to imitate or expand.
+Follow teaching-story.md: learning objective -> mechanism mapping/limitations -> full causal story -> illustrated frames -> explicit academic bridge. Default to one excellent sequence, typically 4–7 frames, expanding for readability. Do not rebuild every lecture slide or create decorative quote introductions. Show named characters, a goal, failed attempt, concrete consequence, changed approach and resolution. The slides' dialogue/narration must carry the whole story.
 
-## Design
+Create in 03_blueprint/:
+- source_map.md: sources/anchors, provenance, selected traditional story or original-fiction label, mechanism mapping, limitations and uncovered concepts.
+- teaching_blueprint.md: full learner-facing story, causal storyboard, prediction question/answer, academic payoff and presenter handoff.
+- image_prompts.md: one numbered section per NEW insertion with all teaching-story.md fields.
+- insertion_plan.json: machine-readable plan defined in teaching-story.md.
 
-Create a coherent whole-deck teaching arc. Select at least one suitable bundled Dharawal story and meaningfully incorporate it through a clearly attributed story reference, faithful excerpt, or source-grounded narrative sequence. Identify the selected story, why it supports the learning arc, and the exact slides where it is used. The academic topic's lack of an existing Dharawal connection is not grounds for omitting the story library; this pipeline intentionally applies the approved pedagogy across domains.
+Check the complete story equals the actual frame passages in order, not a rich hidden story reduced to slogans for illustration. Validate anchors, contiguous sequences, original order and technically meaningful mappings. Run the plugin's scripts/validate_insertions.py on the plan using the verified Python. Word counts are not proof of pedagogical quality: inspect events and explanations yourself. Do not reject text-heavy slides solely for having text.
 
-Use approved Dreaming-inspired pedagogical principles as teaching structure: establish place and relation, present a concrete situation, build observation and tension, invite inference, then reveal the formal academic concept. Preserve the selected story's meaning and cultural context. Do not reduce a story to a generic metaphor, equate cultural beings or events with technical constructs, or invent, merge, continue, imitate, genericise, or reinterpret cultural material. Use only story details supported by the bundled transcription.
+Set blueprint_generated true after validation and leave blueprint_approved false.
 
-If no bundled story can be incorporated without distortion or cultural harm, do not produce a story-free blueprint for approval. Record the specific cultural-review blocker, leave `blueprint_generated` and `blueprint_approved` false, and ask the professor for direction.
+## Review and revision
 
-Create in `03_blueprint/`:
+Show the full story, mapping, original anchors, insertion count and exact prompts. Distinguish original fiction from traditional material. Ask for changes or permission to generate images and stop here.
 
-1. `source_map.md`: course-source inventory, every bundled story considered, selected-story provenance, selection rationale, exact planned use, uncertainties, sensitivities, permissions, and traceability identifiers.
-2. `teaching_blueprint.md`: overall learning goals, narrative arc, selected story and its teaching role, transitions, and one numbered entry per proposed slide containing purpose, source linkage, learner question, narrative function, exact or proposed on-slide text, instructor notes, formal concept reveal, visual role, continuity notes, accessibility needs, and cultural-review flag. Every slide using story material must name the story and trace the material to its bundled source.
-3. `image_prompts.md`: one numbered 16:9 image specification per proposed slide containing composition, all required on-image text, continuity, exclusions, source constraints, accessibility requirements, and cultural-review flags. A prompt depicting story material may include only people, beings, places, objects, actions, and visual details explicitly supported by the selected transcription.
+For feedback, update affected artifacts together, record it in blueprint_review.md, invalidate downstream approvals as specified in the contract, revalidate and present again. This skill also handles later "revise the prompts" requests.
 
-Do not mark text-heavy slides as rendering risks and do not create fallback layouts merely because an image contains text. Still require exact wording and inspect generated text during the image stage.
-
-Validate completeness, pedagogical sequence, source traceability, story attribution, meaningful use of at least one bundled story, cultural safeguards, and slide-number alignment. Story-free output fails validation. Set `blueprint_generated` to true only after the artifacts pass this check; keep `blueprint_approved` false until review closes.
-
-## Iterative professor review
-
-Lead the review with the selected story or stories, why each was chosen, how its meaning was preserved, and the exact slides where it appears. Then present the proposed slide count, full arc, concept reveals, image approach, uncertainties, and cultural-review flags. Ask whether the professor wants changes or wants to proceed to image generation.
-
-When changes are requested, update the affected blueprint artifacts, preserve traceability, log the request and response in `03_blueprint/blueprint_review.md`, rerun alignment checks, and present the revised result. Continue this back-and-forth in the same agent until the professor is satisfied.
-
-Apply the contract's natural-language review semantics. When the professor clearly authorizes image generation, record their wording and timestamp in `blueprint_review.md` and set `blueprint_approved` to true.
-
-## Approved handoff
-
-After approval, follow the contract's agent handoff protocol. Spawn a fresh agent and instruct it to invoke `$dreaming-course-generate-images`. Include the absolute project root, approved blueprint paths, slide count, story/source mappings, continuity requirements, exact-text requirements, and remaining non-blocking warnings. Do not generate images in this agent.
+Only after clear professor approval record wording/timestamp, set blueprint_approved true and hand off to dreaming-course-generate-images with approved plan, prompts and exact story text.

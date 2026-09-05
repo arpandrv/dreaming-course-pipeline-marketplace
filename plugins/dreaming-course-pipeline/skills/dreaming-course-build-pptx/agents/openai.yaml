@@ -1,7 +1,7 @@
 interface:
   display_name: "Dreaming Course: Build PPTX"
   short_description: "Assemble, render, and QA the final deck"
-  default_prompt: "Use $dreaming-course-build-pptx to assemble the reviewed images with python-pptx and QA the deck through local PowerPoint export."
+  default_prompt: "Use $dreaming-course-build-pptx to insert reviewed story slides into preserved teaching decks and verify them through the configured local renderer."
 
 policy:
   allow_implicit_invocation: false

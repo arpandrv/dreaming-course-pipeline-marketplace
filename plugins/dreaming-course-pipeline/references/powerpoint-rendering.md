@@ -1,6 +1,6 @@
 # Local PowerPoint Rendering
 
-Use this reference in Stage 0, Stage 3, and Stage 6 whenever PowerPoint must be probed or a PPTX must be rendered. Read `execution-permissions.md` first. Select exactly one route from the operating system recorded in `pipeline_state.json`. Never substitute a Codex PowerPoint/Presentations connector, computer use, GUI clicking, browser automation, or a cloud converter.
+Use this reference in Stage 0, Stage 3, and Stage 6 whenever PowerPoint must be probed or a PPTX must be rendered. Read `execution-permissions.md` first. Select the route recorded in pipeline_state.json: Windows COM, macOS AppleScript, or Linux LibreOffice headless. Never substitute a Codex PowerPoint/Presentations connector, computer use, GUI clicking, browser automation, or a cloud converter.
 
 ## Shared invariants
 
@@ -49,12 +49,18 @@ The AppleScript should implement an `on run argv` handler that:
 2. tells `Microsoft PowerPoint` to open the POSIX input file;
 3. saves the active presentation to the POSIX output path using PowerPoint's `save as PDF` format;
 4. closes that presentation without changing the PPTX; and
-5. quits the PowerPoint instance after cleanup.
+5. quits PowerPoint only if this invocation launched it and no unrelated presentations are open; otherwise leave the user's application running.
 
 Use `/usr/bin/sdef <resolved-PowerPoint-app-path>` to confirm the installed version's `save`, `close`, and PDF-format terminology before executing the export. The commonly exposed PDF enumeration is `save as PDF`, but the installed scripting dictionary is authoritative. Build the subprocess as an argument array such as `[/usr/bin/osascript, <script-file>, <absolute-pptx>, <absolute-pdf>]` with `shell=False`, capture stdout/stderr, require a zero exit status, and use a bounded timeout.
 
 PowerPoint may launch or appear briefly during AppleScript automation. Do not describe this route as headless. It is local programmatic application automation that requires no GUI interaction after macOS Automation permission is granted.
 
-## Unsupported platforms
+## Linux route
 
-This plugin has no approved PowerPoint renderer for Linux or other operating systems. Stop during Stage 0 with an explicit unsupported-platform blocker rather than installing Aspose, LibreOffice, or another unapproved renderer.
+Use installed LibreOffice Impress via Python subprocess with argument arrays, shell=False and a bounded timeout. Discover soffice/libreoffice with shutil.which and record its absolute path/version. Use a unique temporary user profile per conversion (-env:UserInstallation=<file URI>) to avoid profile locks between jobs, then --headless --convert-to pdf --outdir <isolated output directory> <copied PPTX>. Validate a newly produced non-empty PDF and exact page count; render every page to PNG with PyMuPDF. Preserve source aspect ratio and notes separately with python-pptx. Clean up only the temporary profile created by this invocation.
+
+Install missing LibreOffice/font packages through normal permissions, not an implicit root command. Headless execution needs no desktop UI and may run in a permitted sandbox; request escalation for package installation or a specific blocked process/filesystem boundary. Never reuse an old PDF after a failed conversion. Record font substitution and unsupported-feature differences and visually inspect them.
+
+## Other platforms
+
+Report an unsupported renderer rather than fabricating slide images.

@@ -9,7 +9,7 @@ Read `../../references/pipeline-contract.md` completely before acting.
 
 ## Precondition
 
-Require a Stage 0 handoff containing `dependency_preflight_passed: true`, operating system, verified PowerPoint automation method, Python executable, version, and successful package results. If this skill is invoked directly without that evidence, do not create a project. Spawn a fresh agent to invoke `$dreaming-course-preflight`, pass it the selected source path or current working context, and stop this agent so preflight can return to Stage 1 after verification.
+Require a Stage 0 handoff containing `dependency_preflight_passed: true`, operating system, verified PowerPoint automation method, Python executable, version, and successful package results. If this skill is invoked directly without that evidence, do not create a project. Spawn a fresh agent to invoke `$dreaming-course-preflight`, pass it the selected source path or current working context, and wait for its verified result. If delegation is unavailable, read/run preflight locally under the shared contract before setup.
 
 ## Create and verify
 
@@ -22,4 +22,4 @@ Require a Stage 0 handoff containing `dependency_preflight_passed: true`, operat
 
 ## Automatic handoff
 
-After successful verification, follow the contract's agent handoff protocol. Spawn a fresh agent and instruct it to invoke `$dreaming-course-organize`. Include the absolute project root, verified `source_copy_created: true`, source/copy inventory details, and any warnings. Do not organize files in this agent and do not ask the user to start Stage 2 manually.
+After successful verification, follow the contract's agent handoff protocol. Spawn a fresh agent and instruct it to invoke `$dreaming-course-organize`. Include the absolute project root, verified `source_copy_created: true`, source/copy inventory details, and any warnings. Use the shared contract's local-continuation fallback only if delegation is unavailable; do not ask the user to start Stage 2 manually.

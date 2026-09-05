@@ -33,3 +33,7 @@ A Windows error such as `0x80070520` ("A specified logon session does not exist"
 ## macOS automation requirements
 
 Run the Python process that invokes `/usr/bin/osascript` through the outside-sandbox path so it shares the user's desktop session and can request macOS Automation permission. The user may still need to approve the operating system's one-time permission for the calling host to control Microsoft PowerPoint. Do not use Administrator privileges, `System Events`, keystrokes, menu selection, mouse actions, or computer use.
+
+## Linux headless rendering
+
+LibreOffice Impress is the approved Linux renderer. Use ordinary permitted command execution for headless conversion with a unique temporary profile. Request scoped escalation/network access for system package installation or a demonstrated sandbox boundary; never equate escalation with blanket root authority. Do not alter firewall, services or unrelated host configuration.

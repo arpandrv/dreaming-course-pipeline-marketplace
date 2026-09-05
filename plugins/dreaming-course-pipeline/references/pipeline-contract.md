@@ -1,119 +1,46 @@
 # Dreaming Course Pipeline Contract
 
-## Governing rules
+## Scope and invariants
 
-1. Never modify the professor's original dump folder.
-2. Work only from the copied project folder created by Stage 1.
-3. Before each project stage, inspect `pipeline_state.json`, verify `dependencies_verified: true`, and verify the required prior-stage flags.
-4. Never silently skip unreadable or unsupported files. Record every file, failure, warning, and uncertainty in the relevant manifest.
-5. During ingestion, do not summarize, paraphrase, correct, interpret, or modernize source text.
-6. Treat Dreaming and other cultural material as culturally situated source material, not generic creative raw material. The bundled Dharawal transcriptions are approved, attributed source material for this pipeline and count as source support. Their inclusion authorizes faithful quotation, reference, and pedagogical use as written; it does not authorize inventing, merging, continuing, imitating, genericising, or reinterpreting stories or cultural details.
-7. Every blueprint must select and meaningfully incorporate at least one suitable bundled Dharawal story. A course topic that does not itself mention Dharawal material is not a reason to omit the library. If no story can be used without distortion or cultural harm, stop in the blueprint stage, record the specific blocker, and request human direction. Never approve or hand off a story-free blueprint.
-8. Stage 0 must verify a real Python 3 interpreter, the complete package set, and the platform renderer before Stage 1 begins. Read `execution-permissions.md`: virtual-environment/package installation and every Microsoft PowerPoint automation command must explicitly request Codex's outside-sandbox/elevated execution mode when required. This means execution outside the Codex sandbox in the user's normal desktop session, not Administrator privileges. Windows uses local `pywin32` COM automation with explicit COM initialization and direct PowerPoint PNG export. macOS uses Python `subprocess` with built-in `/usr/bin/osascript` and AppleScript to automate installed Microsoft PowerPoint after macOS Automation permission is granted. If outside-sandbox execution is unavailable or denied, record that precise blocker; do not retry Office automation in the sandbox or misdiagnose the application. Neither route may be replaced by a Codex PowerPoint/Presentations connector, computer use, GUI clicking, `System Events`, keystrokes, browser automation, Aspose, LibreOffice, or a cloud document service. Unsupported platforms or missing/denied renderers are genuine blockers.
-9. Human review occurs inside the blueprint stage before image generation and inside the image stage before PowerPoint creation.
-10. Maintain a traceable audit trail in project artifacts and `pipeline_state.json`.
-11. Stop only at a required human-review loop, a genuine blocker, or the completed final stage. Successful non-review stages automatically hand off to a fresh agent.
+This is the local Codex edition of the current insertion-only Dreaming Studio pipeline. No n8n, Supabase, private worker, author account or hardcoded model endpoint is required.
 
-## Standard project structure
+1. Preserve the professor's source folder byte-for-byte. Work on the protected project copy.
+2. Read pipeline_state.json before each stage. Record every unsupported/unreadable file. Preserve source wording in extraction; mark OCR uncertainty.
+3. Read teaching-story.md for design/revision. Original educational fiction is allowed, and is the default when traditional events do not fit the mechanism. Bundled stories are available references, not a mandatory quota. Label original fiction; do not claim invented dialogue is traditional testimony. Bundling a story does not establish unrestricted rights.
+4. Preserve original teaching slides and their relative order. Generate ONLY new narrative insertions. Each sequence is contiguous immediately before its target original slide.
+5. Professor review occurs inside blueprint and image generation, not separate confirmation stages. Image generation requires story approval; build requires image approval.
+6. Use local Python and powerpoint-rendering.md, respecting execution-permissions.md. Do not install presentation/computer-use plugins as substitutes.
+7. Never fabricate successful outputs, approximate source renders or claim agent inspection is professor acceptance.
 
-```text
-project_root/
-  00_source_original/
-  01_organized/
-    pptx/
-    pdf/
-    docx/
-    markdown/
-    others/
-  02_processed/
-    pptx/
-    pdf/
-    docx/
-    markdown/
-    others/
-    processing_manifest.md
-  03_blueprint/
-    source_map.md
-    teaching_blueprint.md
-    image_prompts.md
-    blueprint_review.md
-  04_images/
-    slide_001.png
-    new_slide_001.png
-    new1_slide_001.png
-    image_manifest.md
-    image_review.md
-  05_output/
-    final_deck.pptx
-    rendered_slides/
-    qa_report.md
-    final_manifest.md
-  pipeline_state.json
-```
+## Project artifacts
 
-`04_images/` is one flat review folder. Do not create `generated`, `approved`, or `superseded` image subfolders.
+Keep the existing numbered folders:
+- 00_source_original/: verified source copy.
+- 01_organized/: classified sources and inventory.
+- 02_processed/: per-source images, extracted/OCR text, speaker notes, processing_manifest.md.
+- 03_blueprint/: source_map.md, teaching_blueprint.md, image_prompts.md, insertion_plan.json, blueprint_review.md.
+- 04_images/: slide_NNN.png, new_slide_NNN.png, new1_slide_NNN.png, image_manifest.md, image_review.md.
+- 05_output/: final_deck.pptx (or per-source decks), rendered_slides/, qa_report.md, final_manifest.md.
+- pipeline_state.json.
 
-## State file
+Use one flat image-review folder. The manifest selects exactly one current candidate per insertion. Insertion IDs are not original-slide numbers.
 
-Initialize `pipeline_state.json` with these keys. A stage updates only its own flags and audit metadata.
+## State and invalidation
 
-```json
-{
-  "project_name": "",
-  "dependencies_verified": false,
-  "operating_system": "",
-  "powerpoint_automation_method": "",
-  "python_executable": "",
-  "dependency_versions": {},
-  "source_copy_created": false,
-  "files_organized": false,
-  "files_processed": false,
-  "blueprint_generated": false,
-  "blueprint_approved": false,
-  "images_generated": false,
-  "images_approved": false,
-  "pptx_built": false,
-  "final_qa_passed": false
-}
-```
+Keep project_name, operating_system, powerpoint_automation_method, python_executable, dependency_versions and these flags: dependencies_verified, source_copy_created, files_organized, files_processed, blueprint_generated, blueprint_approved, images_generated, images_approved, pptx_built, final_qa_passed. Initialize flags false and set only after verification.
 
-## Project discovery
+Record original counts per source, insertion count and expected final counts separately. A blueprint revision invalidates its approval and downstream approvals/output status; image revision invalidates image approval and final output status. Keep artifacts recoverable and reuse unchanged approved candidates. An older completed project is not automatically compliant: explain migration and review changed content rather than overwriting it.
 
-Operate on the project selected by the user or the single unambiguous project under the current working directory. If multiple plausible projects or state files exist, ask the user to select one. Never guess across projects.
+## Routing and handoff
 
-## Agent handoff protocol
+0 preflight -> 1 setup-project -> 2 organize -> 3 process -> 4 blueprint + review -> 5 generate-images + review -> 6 build-pptx + QA.
 
-At every successful non-terminal transition, spawn a fresh agent using the available agent-delegation capability. Do not merely recommend the next command and do not run the next stage in the same agent.
+Use existing dreaming-course-* names. Prompt/story revision resumes blueprint; image revision resumes generate-images. No legacy prompts or redundant review skills.
 
-Stage 0 is the sole handoff exception to the project-root field because the project does not exist yet. Its handoff must provide the absolute professor-source path or selected working context, the intended project-parent context if known, and the verified pipeline Python path. Stage 1 creates the project root; all later handoffs must provide it.
+After automatic stages and explicit review approvals, dispatch a fresh subagent through available, permitted delegation, not a new user-owned task. Pass the absolute installed NEXT SKILL.md path and require reading it and its references: a skill name alone does not load instructions. Include project root (source context before setup), Python/render route, verified state, artifacts, insertion/source identities, review decision and warnings. Do not redo completed stages. The coordinator brings child review questions into this conversation and routes the user's reply back; never manufacture approval.
 
-Give the new agent a handoff containing:
+If delegation is unavailable, state the limitation and read/run the next skill locally when permitted. Do not pretend a new agent ran. Review boundaries still apply. Stage 6 ends automatic routing.
 
-- the absolute project-root path;
-- the completed stage and verified state flags;
-- the verified Python executable and dependency-preflight status;
-- the exact next skill to invoke;
-- the artifacts it must read;
-- unresolved warnings, uncertainties, and cultural-review flags;
-- an instruction not to redo completed stages.
+## Review semantics
 
-Use this handoff shape:
-
-```text
-Continue the Dreaming Course Pipeline in a fresh agent.
-Project root: <absolute path>
-Completed stage: <stage and skill>
-Verified state: <relevant flags>
-Artifacts: <paths>
-Warnings/flags: <items or none>
-Invoke and follow: $<next-skill>
-Read that skill and the shared pipeline contract completely. Do not redo completed stages.
-```
-
-Confirm that the new agent was dispatched. If delegation is unavailable or fails, report the blocker and exact next skill; never claim the handoff succeeded.
-
-## Human-review semantics
-
-Do not require a magic approval phrase. Accept natural-language permission when the current context makes the user's intent to proceed clear and no requested changes remain. Infer narrowly: enthusiasm, impatience, slang, or minor typos can still be approval when the action is unambiguous, but an ambiguous response requires one concise clarification.
-
-Record the user's wording and timestamp in the relevant review file. A request for changes keeps the review loop open. Examples such as “go ahead and make the PowerPoint,” “just do the thing,” or “I'm alright; I'll fix it myself” can close image review when they clearly mean no more agent revisions are requested and the current images should be used.
+Accept clear natural-language authorization for the current action, not a magic phrase. "Go ahead" at blueprint review authorizes images only. "Make the PPTX" at image review authorizes the current set. Requested changes keep review open; clarify ambiguity. Record actual wording and timestamp.

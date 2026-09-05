@@ -1,23 +1,23 @@
 {
   "name": "dreaming-course-pipeline",
-  "version": "0.2.0+codex.20260826130401",
-  "description": "A dependency-checked agent-handoff workflow that turns weekly materials and bundled Dharawal stories into reviewed, narrative-led teaching decks.",
+  "version": "0.2.0+codex.20260905091649",
+  "description": "Local insertion-only course production with complete teaching stories, professor reviews and preserved lecture slides.",
   "author": {
     "name": "Dreaming Course Pipeline contributors"
   },
   "skills": "./skills/",
   "interface": {
     "displayName": "Dreaming Course Pipeline",
-    "shortDescription": "Build governed narrative-led teaching decks.",
-    "longDescription": "Seven linked workflow skills verify Windows or macOS dependencies, use scoped outside-sandbox Office automation, preserve and process sources, require attributed use of the bundled Dharawal story library, review blueprints and images, and assemble and QA PowerPoint decks.",
+    "shortDescription": "Add complete teaching stories to existing slides.",
+    "longDescription": "Seven linked skills prepare local sources, write and review causal teaching stories, illustrate only new insertion slides, revise selected images and verify augmented PowerPoints. Supports Windows, macOS and Linux.",
     "developerName": "Dreaming Course Pipeline contributors",
     "category": "Productivity",
     "capabilities": [
-      "Automatic Python and package dependency preflight",
-      "Scoped outside-sandbox execution for local Office automation",
-      "Local PowerPoint rendering on Windows and macOS",
-      "Seven linked course-production skills with agent handoffs",
-      "Required attributed use of the bundled Dharawal story library"
+      "Dependency preflight and scoped local execution",
+      "Windows/Mac PowerPoint and Linux LibreOffice rendering",
+      "Complete original teaching stories with optional attributed references",
+      "Insertion-only slide plans and iterative professor review",
+      "Preserved original lecture slides and notes"
     ],
     "defaultPrompt": "Use $dreaming-course-preflight to verify dependencies and start the automatic Dreaming Course Pipeline from my course materials."
   }

@@ -1,28 +1,30 @@
 ---
 name: dreaming-course-build-pptx
-description: Assemble the final 16:9 PowerPoint from the professor-accepted current image set, render it, run structural and visual QA, and return the completed project to open-ended user collaboration.
+description: Insert reviewed story slides into preserved teaching decks, retain original order and notes, render and verify the result, and deliver the final PowerPoint.
 ---
 
-# Stage 6 - Build PowerPoint and QA
+# Stage 6 — Insert story slides and verify
 
-Read `../../references/pipeline-contract.md`, `../../references/execution-permissions.md`, and `../../references/powerpoint-rendering.md` completely before acting.
+Read ../../references/pipeline-contract.md, ../../references/powerpoint-rendering.md and ../../references/execution-permissions.md completely.
 
-## Preconditions
+Require dependencies_verified, blueprint_approved and images_approved. Read insertion_plan.json and image_manifest.md. Validate every anchor and one current image per insertion.
 
-Require `dependencies_verified: true`, `blueprint_approved: true`, and `images_approved: true`. Use the exact `python_executable` recorded in `pipeline_state.json`. Read `04_images/image_manifest.md` and use its current-file mapping. Require exactly one current image for every blueprint slide, with no missing or duplicate slide mappings. Older revision files may remain in the folder but must not be inserted.
+## Preserve the original lecture
 
-## Assemble
+For PPTX, open a copied original with python-pptx and add only reviewed image slides before their original targets. Preserve source slide objects, notes, masters, relationships and order: do not rebuild the lecture from screenshots. Record original slide identities BEFORE inserting so additions cannot shift later anchors.
 
-Use `python-pptx` with `lxml` support to create a 16:9 presentation with one full-bleed current image per slide in exact numerical order. Use `Pillow` to verify each source image's pixel dimensions and aspect ratio before placement. Do not crop away content, stretch images, add unreviewed text or graphics, or alter the selected images. Save the generated file as `05_output/final_deck.pptx`.
+Use a suitable blank layout and original deck dimensions. Preserve image aspect ratio without cropping; letterbox unobtrusively when ratios differ. Reorder added slides relative to original slide IDs/relationships; do not splice arbitrary XML across presentations. Verify round-trip fidelity because python-pptx cannot guarantee preservation of every Office feature. Report unsupported loss instead of claiming originals are intact.
 
-## QA
+Keep original notes unchanged. Set each inserted slide's notes to its approved Narration, including the final verbal academic handoff.
 
-Render the finished deck through the platform route recorded in `pipeline_state.json`, requesting outside-sandbox execution before Office automation. Windows uses `pywin32` COM with explicit `pythoncom.CoInitialize()`/`CoUninitialize()` and direct PowerPoint PNG export into `05_output/rendered_slides/`. macOS uses Python `subprocess` with `/usr/bin/osascript` and AppleScript to export PDF, then `PyMuPDF` renders every PDF page into that folder. Close and clean up only the locally created PowerPoint instance. On macOS, allow the already-approved Automation permission but do not use `System Events`, keystrokes, menus, mouse actions, `activate`, or computer use. If outside-sandbox execution is unavailable, stop with that exact permission blocker rather than retrying Office automation inside the sandbox. Do not use a Codex PowerPoint/Presentations connector, Aspose, LibreOffice, Poppler, or a cloud service.
+PDF lecture pages may be embedded unchanged as image slides; disclose they are not editable. For multiple PPTX inputs, default to one augmented deck per source to preserve dimensions/features. Combine only if the professor requests an order and a faithful supported merge is available; never silently flatten decks to simplify merging.
 
-Inspect the rendered output, not only the PPTX object model. Use `python-pptx`/`lxml` for structural slide-count and relationship checks; `Pillow`, `numpy`, and `opencv-python` for aspect ratio, full-bleed placement, clipping, borders, blank or corrupt slides, and image artifacts; and PaddleOCR for spelling/exact-text evidence where reviewed slides contain text. Visually resolve OCR discrepancies and inspect continuity and alignment with the reviewed blueprint and image manifest.
+Save 05_output/final_deck.pptx for one source or named per-source outputs. Never overwrite original inputs or earlier delivered decks without authorization.
 
-Write `05_output/qa_report.md` with each check, evidence, result, and unresolved issue. Write `05_output/final_manifest.md` with slide-to-image mapping, hashes, Python executable, package/tool versions, local PowerPoint export method, review references, and output paths.
+## QA and delivery
 
-Fix assembly or rendering defects and rerun QA. If a defect requires changing image content, return to the user with the affected slide and proposed revision rather than silently replacing a reviewed image.
+Render through the verified platform route. Require final count = original count + approved insertions per source. Verify anchors/order, no stale candidates, notes, aspect ratio and OOXML relationships. Compare final renders of original slides with pre-insertion renders using the same renderer/dimensions; visually resolve differences. Inspect insertions for complete text, continuity, readable scenes and explicit concept payoff. Pillow/numpy/OpenCV and OCR provide evidence, not a substitute for inspection.
 
-Set `pptx_built` to true after structural assembly succeeds and `final_qa_passed` to true only when all required checks pass. Return the final deck path, QA paths, counts, tools used, and limitations. This is the terminal pipeline stage: remain available for the user's open-ended follow-up questions or requested edits and do not spawn another agent automatically.
+Write qa_report.md and final_manifest.md with source hashes, original-to-final mapping, insertion/image hashes, notes checks, renderer/version and limitations. Fix assembly defects and rerun checks. Return image-content changes for professor review instead of silently altering accepted art.
+
+Set pptx_built after assembly and final_qa_passed only after required checks pass. Deliver files and QA results with retained-editability limitations. End automatic routing and handle open-ended follow-up.

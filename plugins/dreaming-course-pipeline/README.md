@@ -1,51 +1,58 @@
 # Dreaming Course Pipeline for Codex
 
-This plugin packages a seven-stage course-production workflow beginning with dependency preflight. The user starts Stage 0 once; successful stages automatically hand the project to fresh agents until a human review is required.
+The local skill edition of Dreaming Studio: keep the lecture, add complete illustrated teaching stories immediately before the concepts they explain. No web-app account, n8n, Supabase or private API server is required.
 
-## Install
+## Install from GitHub
 
-Add the folder containing `.agents/plugins/marketplace.json` as a local marketplace:
-
-```powershell
-codex plugin marketplace add "C:\path\to\dreaming-course-pipeline-marketplace"
+```sh
+codex plugin marketplace add arpandrv/dreaming-course-pipeline-marketplace --ref main
+codex plugin add dreaming-course-pipeline@dreaming-course-pipeline-marketplace
 ```
 
-Restart Codex, open the Plugins directory, and install **Dreaming Course Pipeline**. To share it, send the entire `dreaming-course-pipeline-marketplace` folder or publish it in a Git repository.
+For an already installed marketplace:
 
-## Start the pipeline
+```sh
+codex plugin marketplace upgrade dreaming-course-pipeline-marketplace
+codex plugin add dreaming-course-pipeline@dreaming-course-pipeline-marketplace
+```
 
-Select the plugin and provide the source folder, or invoke the entry skill directly:
+Open a new Codex task after installation/update and provide your source folder:
 
 ```text
-$dreaming-course-preflight
+Use $dreaming-course-preflight with my course folder.
 ```
 
-The automatic chain is:
+## Workflow
 
-0. `$dreaming-course-preflight` — verifies Python, installs missing Python packages, and rechecks them
-1. `$dreaming-course-setup-project`
-2. `$dreaming-course-organize`
-3. `$dreaming-course-process`
-4. `$dreaming-course-blueprint` — pauses for iterative professor review
-5. `$dreaming-course-generate-images` — pauses for iterative image review
-6. `$dreaming-course-build-pptx`
+0. Preflight: verify Python, install missing packages in a dedicated environment, check local renderer.
+1. Setup: protected, hash-verified source copy.
+2. Organize: classify sources and record every outcome.
+3. Process: slide/page images, selectable text or OCR where needed, verbatim notes and Markdown evidence.
+4. Blueprint: full causal story, exact visible passages, technical mapping and insertion anchors. Review/revise here.
+5. Images: generate only new story frames. Review and revise selected images here.
+6. Build: insert accepted frames into original teaching decks, preserve order and notes, render and verify.
 
-Each completed non-review stage spawns a fresh agent with a structured handoff and invokes the next skill. The professor does not need to start each stage manually. If a handoff fails because agent delegation is unavailable, the current agent reports the blocker and the exact next skill instead of pretending the stage continued.
+Successful stages use fresh agent handoffs when available. Review stays in the same conversation. Existing skill names remain valid; there are no legacy prompt files or separate confirmation skills.
 
-Stage 0 uses `requirements.txt` and the bundled dependency-check script to create or reuse a dedicated pipeline virtual environment, install only missing packages, run `pip check`, and verify the complete set. It does not modify Codex's bundled Python. It explicitly requests outside-sandbox execution for environment/package installation when needed and for every Microsoft PowerPoint automation command. This is Codex execution in the user's normal desktop session, not an Administrator shell. Ordinary project file work remains sandboxed.
+The story is not a quote-card preface. Characters experience a goal, failed attempt, consequence, discovery and resolution, followed by an explicit academic bridge. The whole story appears in readable captions/dialogue. Original educational fiction is clearly labelled; the unchanged bundled Dharawal stories remain optional attributed references, not a forced quota.
 
-Stage 3 uses `python-pptx` for speaker notes and installed Microsoft PowerPoint for faithful slide rendering. Windows controls PowerPoint with `pywin32` COM, explicitly initializes COM, and exports slides directly to PNG. macOS controls PowerPoint from Python through built-in `osascript` and AppleScript, exports PDF, and renders pages with `PyMuPDF` after the user grants macOS Automation permission. Neither route uses a Codex PowerPoint/Presentations connector, computer use, GUI clicking, browser automation, Aspose, or a cloud document service.
+Original PPTX teaching slides are retained, not regenerated as images. Multiple source decks default to separate augmented outputs; PDF pages remain non-editable images. The build reports any feature-fidelity limitations.
 
-## Platform requirements
+## Local requirements
 
-- **Windows:** locally installed Microsoft PowerPoint and the Stage 0-installed `pywin32` package. PowerPoint COM probes and exports run outside the Codex sandbox with `pythoncom.CoInitialize()` and `DispatchEx`; they do not require an Administrator shell.
-- **macOS:** locally installed Microsoft PowerPoint for Mac, built-in `/usr/bin/osascript` and `/usr/bin/sdef`, and one-time macOS Automation permission for the calling Codex/Python host. PowerPoint may launch or appear briefly, but the pipeline does not click or type in it.
-- **Linux and other platforms:** no approved renderer; preflight stops before creating a project.
+- Codex reasoning, image generation and local command execution. A skill does not grant access to an unavailable image tool or bypass approval controls.
+- Windows: installed Microsoft PowerPoint with pywin32 COM.
+- macOS: installed Microsoft PowerPoint with osascript/AppleScript and macOS Automation permission.
+- Linux: LibreOffice Impress headless export to PDF, then PyMuPDF to images.
+- Python packages: requirements.txt, verified/installed by scripts/check_dependencies.py in a dedicated virtual environment, not Codex's managed runtime.
 
-## Bundled story library
+Office automation requests scoped outside-sandbox execution in the user's desktop session. Normal project work remains sandboxed; Linux headless export uses ordinary permitted execution. Missing applications, permissions, packages or unsupported features are reported distinctly.
 
-The plugin includes the curated Dharawal story transcriptions in `references/Dharawal_story_transcriptions/`. The blueprint stage reads the complete library, selects at least one suitable story, and incorporates it with attribution and source traceability. A blueprint containing no bundled story material fails validation. Professors do not have to provide the stories for each project.
+## Package checks
 
-## Cultural and editorial safeguards
+```sh
+python -m unittest discover -s tests
+python plugins/dreaming-course-pipeline/scripts/validate_insertions.py /path/to/03_blueprint/insertion_plan.json
+```
 
-The shared contract in `references/pipeline-contract.md` applies to every stage. It preserves originals, requires faithful ingestion, prevents invented or genericised cultural content, records failures, and places human review inside the blueprint and image-generation stages.
+The first command runs from the repository root. The plan validator checks real source anchors, sequence continuity, identities and complete text fields; professor review still assesses story quality and technical accuracy.
